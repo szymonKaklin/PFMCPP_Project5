@@ -106,7 +106,7 @@ Guitar::Strings::Strings()
 
 void Guitar::restringGuitar(Guitar::Strings strings)
 {
-    std::cout << "Guitar of model " << model << ", with string number: "<< stringNum << ", has been   re-strung using strings of gauge: "<< strings.gauge << "\n" << std::endl;
+    std::cout << "Guitar of model " << model << ", with string number: "<< stringNum << ", re-strung using strings of gauge: "<< strings.gauge << "\n" << std::endl;
 }
 
 void Guitar::tune()
@@ -162,7 +162,7 @@ int Airliner::beginBoarding(int passengers)
         --passengers;
     }
     std::cout << "Boarding Complete! Empty Seats: " << capacity << std::endl;
-    return 0;
+    return 1;
 }
 
 /*
@@ -170,33 +170,47 @@ int Airliner::beginBoarding(int passengers)
  with 2 member functions
  */
 
-struct PizzaPlane 
+struct GuitarStore 
 {
-    PizzaPlane()
+    GuitarStore()
     {
-        std::cout << "Constructing PizzaPlane with pizza of slice size " << pizza.sliceSize << " and plane of type " << plane.company << std::endl;
+        std::cout << "Constructing Guitar Store " << std::endl;
     }
-    ~PizzaPlane()
+    ~GuitarStore()
     {
-        std::cout << "Destroying PizzaPlane" << std::endl;
+        std::cout << "Destroying GuitarStore" << std::endl;
     }
 
-    Pizza pizza;
+    Guitar guitar;
+    Guitar::Strings strings;
     Airliner plane;
 
-    void loadPizza();
-    double calculatePizzaPerPerson(); 
+    void modifyGuitar(double guage, char model, int frets, int stringNum);
+    void loadPlane(int guitarNum, int passangers);
+    
 };
 
-void PizzaPlane::loadPizza()
+void GuitarStore::modifyGuitar(double gauge, char model, int frets, int stringNum)
 {
-    std::cout << "loading pizza of diameter " << pizza.diameter << " on plane of type " << plane.company << std::endl;
+    std::cout << "Modifying guitar:\n Model:" << guitar.model << "\n String number: "<< guitar.stringNum << "\n Fret number: "<< guitar.fretNum << "\nModified to: " << std::endl;
+
+    strings.gauge = gauge;
+    guitar.model = model;
+    guitar.fretNum = frets;
+    guitar.stringNum = stringNum;
+    
+    guitar.restringGuitar(strings);
 }
 
-double PizzaPlane::calculatePizzaPerPerson()
+void GuitarStore::loadPlane(int guitarNum, int passengers)
 {
-    double r = pizza.diameter/2;
-    return (r*r*3.1415)/plane.capacity;
+    plane.beginBoarding(passengers);
+    while( (plane.capacity && guitarNum) > 0 )
+    {
+        --plane.capacity;
+        --guitarNum;
+    }
+    std::cout << "Guitars Loaded!\n Leftover guitars: " << guitarNum << "\n Empty Seats: " << plane.capacity << std::endl; 
 }
 
 /*
@@ -208,31 +222,35 @@ struct Party
 {
     Party()
     {
-        std::cout << "Constructing Party for a maximum of " << plane.capacity << " people" << std::endl;
+        std::cout << std::boolalpha << "Constructing Party and running party checks: \n Guitar tuned: " << guitar.tuned << "\n Plane capacity: " << plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (pizza.calculateSliceSize(plane.capacity) >= 0.5) << std::endl;
     }
     ~Party()
     {
         std::cout << "Destroying Party" << std::endl;
     }
     
-    Pizza pizza;
     Airliner plane;
+    Pizza pizza;
+    Guitar guitar;
 
-    void addToppingsPerString(Guitar guitar);
-    void startParty(double fuel, Guitar guitar);
+    void increasePizzaDiameter();
+    void startParty(double fuel);
 };
 
-void Party::addToppingsPerString(Guitar guitar)
+void Party::increasePizzaDiameter()
 {
-    pizza.numOfToppings += guitar.stringNum;
-    std::cout << "Added " << guitar.stringNum << " toppings" << std::endl;
+    while( pizza.calculateSliceSize(plane.capacity) < 0.5 )
+    {
+        ++pizza.diameter;
+    }
+    std::cout << "Final Pizza diameter: " << pizza.diameter << std::endl; 
 }
 
-void Party::startParty(double fuel, Guitar guitar)
+void Party::startParty(double fuel)
 {
-    if( plane.isTakeoffReady(fuel) && guitar.tuned)
+    if( plane.isTakeoffReady(fuel) && guitar.tuned && pizza.calculateSliceSize(plane.capacity) >= 0.5)
     {
-        std::cout << "Party can start! Guitar tuned and fuel amount is OK" << std::endl;
+        std::cout << "Party can start! Guitar tuned, pizza per person OK, fuel OK" << std::endl;
     }
     else
     {
@@ -290,13 +308,14 @@ int main()
     // Project 5 Part 1
     std::cout << "\nProject 5 Part 1 Checks\n" << std::endl;
 
-    PizzaPlane order;
-    order.loadPizza();
-
-    std::cout << "Pizza per person with max passanger count: " << order.calculatePizzaPerPerson() << std::endl;
+    GuitarStore store;
+    store.modifyGuitar(0.13, 'g', 21, 6);
+    store.loadPlane(18, 400);
 
     Party party;
-    party.addToppingsPerString(gibson);
-    party.startParty(183390, gibson);
+    party.guitar.tune();
+    party.increasePizzaDiameter();
+    party.startParty(183390);
+
 }
 
