@@ -42,7 +42,7 @@ namespace Example
 		{ 
             // 2b) explicitly using 'this' inside this member function.
 			std::cout << "MyFoo returnValue(): " << this->returnValue() << " and MyFoo memberVariable: " << this->memberVariable << std::endl; 
-		}  
+		}
 		
         int returnValue() { return 3; }
         float memberVariable = 3.14f;
@@ -77,9 +77,15 @@ struct Pizza
     double calculateSliceSize(int slices);
     Pizza makePizza();
     void distributeToppings(int toppings, int slices);
+    void properties();
 };
 
-Pizza::Pizza() : numOfToppings(1), diameter(14), sliceSize(4.5) {}
+Pizza::Pizza() : numOfToppings(1), diameter(14), sliceSize(4.5) { std::cout << "Constructing Pizza" << std::endl;  } 
+
+void Pizza::properties()
+{
+    std::cout << "Pizza diameter is: " << this->diameter << "\nSlice size is: " << this->calculateSliceSize(6) << std::endl;
+}
 
 double Pizza::calculateSliceSize(int slices)
 {
@@ -127,12 +133,18 @@ struct Guitar
 
     void restringGuitar(Strings strings);
     void tune();
+    void info();
 };
 
-Guitar::Guitar() {}
+Guitar::Guitar() { std::cout << "Constructing Guitar" << std::endl;  } 
 Guitar::Strings::Strings()
 {
     gauge = 0.011;
+}
+
+void Guitar::info()
+{
+    std::cout << "Number of frets on guitar: " << this->fretNum << "\nNumber of strings: " << this->stringNum << std::endl;
 }
 
 void Guitar::restringGuitar(Guitar::Strings strings)
@@ -165,14 +177,20 @@ struct Airliner
     void checkFuelAmount();
     bool isTakeoffReady(double fuelAmount);
     int beginBoarding(int passengers);
+    void status();
     
 };
 
-Airliner::Airliner() {}
+Airliner::Airliner() { std::cout << "Constructing Airliner" << std::endl; }
+
+void Airliner::status()
+{
+    std::cout << std::boolalpha << "Airliner capacity: " << this->capacity << "\nAirliner Fuel: " << this->fuelCapacity << "\nIs Airliner takeoff ready: " << this->isTakeoffReady(190000) << std::endl;
+}
 
 void Airliner::checkFuelAmount()
 {
-    std::cout << "Fuel amount: " << fuelCapacity << "\n" << std::endl;
+    std::cout << "Fuel amount: " << fuelCapacity << std::endl;
 }
 
 bool Airliner::isTakeoffReady(double fuelAmount)
@@ -216,10 +234,16 @@ struct GuitarStore
     Guitar::Strings strings;
     Airliner plane;
 
-    void modifyGuitar(double guage, char model, int frets, int stringNum);
+    void modifyGuitar(double gauge, char model, int frets, int stringNum);
     void loadPlane(int guitarNum, int passangers);
+    void info();
     
 };
+
+void GuitarStore::info()
+{
+    std::cout << "Store Guitar info:\n Model:" << this->guitar.model << "\n String number: "<< this->guitar.stringNum << "\n Fret number: "<< this->guitar.fretNum << "\nModified to: " << std::endl;
+}
 
 void GuitarStore::modifyGuitar(double gauge, char model, int frets, int stringNum)
 {
@@ -253,7 +277,7 @@ struct Party
 {
     Party()
     {
-        std::cout << std::boolalpha << "Constructing Party and running party checks: \n Guitar tuned: " << guitar.tuned << "\n Plane capacity: " << plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (pizza.calculateSliceSize(plane.capacity) >= 0.5) << std::endl;
+        std::cout << "Constructing Party" << std::endl;
     }
     ~Party()
     {
@@ -266,7 +290,13 @@ struct Party
 
     void increasePizzaDiameter();
     void startParty(double fuel);
+    void partyPrep();
 };
+
+void Party::partyPrep()
+{
+    std::cout << std::boolalpha << "Running party checks: \n Guitar tuned: " << this->guitar.tuned << "\n Plane capacity: " << this->plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (this->pizza.calculateSliceSize(this->plane.capacity) >= 0.5) << std::endl;
+}
 
 void Party::increasePizzaDiameter()
 {
@@ -308,45 +338,52 @@ int main()
     
     Guitar gibson;
     Guitar::Strings ernie;
-    gibson.restringGuitar(ernie);
+    // gibson.restringGuitar(ernie);
+    std::cout << "Number of frets on guitar: " << gibson.fretNum << "\nNumber of strings: " << gibson.stringNum << std::endl;
+    gibson.info();
+
+    std::cout << "\n" << std::endl;
 
     Airliner airbus737;
-    airbus737.checkFuelAmount();
-    if(airbus737.isTakeoffReady(500000))
-    {
-        std::cout << "Is takeoff ready \n" << std::endl;
-    }
-    else
-    {
-        std::cout << "Is not takeoff ready \n" << std::endl;
-    }
+    std::cout << std::boolalpha << "Airliner capacity: " << airbus737.capacity << "\nAirliner fuel: " << airbus737.fuelCapacity << "\nIs Airliner takeoff ready: " << airbus737.isTakeoffReady(190000) << std::endl;
+    airbus737.status();
 
+    std::cout << "\n" << std::endl;
+    
     Pizza margharita;
-    std::cout << "Slice size is: " << margharita.calculateSliceSize(6) << "\n" << std::endl;
+    std::cout << "Pizza diameter is: " << margharita.diameter << "\nSlice size is: " << margharita.calculateSliceSize(6) << std::endl;
+    margharita.properties();
 
 
     // Project 3 Part 5 Checks
-    std::cout << "\nProject 3 Part 5 Checks\n" << std::endl;
+    //std::cout << "\nProject 3 Part 5 Checks\n" << std::endl;
 
-    gibson.tune();
+    // gibson.tune();
 
-    std::cout << "\n" << std::endl;
-    airbus737.beginBoarding(420);
+    //std::cout << "\n" << std::endl;
+    //airbus737.beginBoarding(420);
 
-    std::cout << "\n" << std::endl;
-    margharita.distributeToppings(35, 8);
+    //std::cout << "\n" << std::endl;
+    //margharita.distributeToppings(35, 8);
 
     // Project 5 Part 1
-    std::cout << "\nProject 5 Part 1 Checks\n" << std::endl;
+    //std::cout << "\nProject 5 Part 1 Checks\n" << std::endl;
+
+    std::cout << "\n" << std::endl;
 
     GuitarStore store;
-    store.modifyGuitar(0.13, 'g', 21, 6);
-    store.loadPlane(18, 400);
+    //store.modifyGuitar(0.13, 'g', 21, 6);
+    std::cout << "Store Guitar info:\n Model:" << store.guitar.model << "\n String number: "<< store.guitar.stringNum << "\n Fret number: "<< store.guitar.fretNum << std::endl;
+    store.info();
+    //store.loadPlane(18, 400);
+
+    std::cout << "\n" << std::endl;
 
     Party party;
-    party.guitar.tune();
-    party.increasePizzaDiameter();
-    party.startParty(183390);
-
+    //party.guitar.tune();
+    //party.increasePizzaDiameter();
+    std::cout << std::boolalpha << "Running party checks: \n Guitar tuned: " << party.guitar.tuned << "\n Plane capacity: " << party.plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (party.pizza.calculateSliceSize(party.plane.capacity) >= 0.5) << std::endl;
+    party.partyPrep();
+    //party.startParty(183390);
 }
 
