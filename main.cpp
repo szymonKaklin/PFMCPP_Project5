@@ -239,7 +239,6 @@ struct AirlinerWrapper
  new UDT 4:
  with 2 member functions
  */
-
 struct GuitarStore 
 {
     GuitarStore()
@@ -304,7 +303,6 @@ struct GuitarStoreWrapper
  new UDT 5:
  with 2 member functions
  */
-
 struct Party
 {
     Party()
