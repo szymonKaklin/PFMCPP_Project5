@@ -25,7 +25,7 @@ Create a branch named Part3
  #endif
  /*
     you would update that to use your wrappers:
-    
+
  */
 
 #if false
@@ -50,6 +50,7 @@ You don't have to do this, you can keep your current object name and just change
 
 
 #include <iostream>
+#include "LeakedObjectDetector.h"
 /*
  copied UDT 1:
  */
@@ -64,6 +65,7 @@ struct Pizza
     Pizza makePizza();
     void distributeToppings(int toppings, int slices);
     void properties();
+    JUCE_LEAK_DETECTOR(Pizza)
 };
 
 Pizza::Pizza() : numOfToppings(1), diameter(14), sliceSize(4.5) { std::cout << "Constructing Pizza" << std::endl;  } 
@@ -98,6 +100,16 @@ void Pizza::distributeToppings(int toppings, int slices)
     std::cout << "Toppings left to distribute: " << numOfToppings << std::endl;
 }
 
+struct PizzaWrapper
+{
+    PizzaWrapper( Pizza* ptr ) : pointerToPizza( ptr ) { }
+    ~PizzaWrapper()
+    {
+        delete pointerToPizza;
+    }
+    
+    Pizza* pointerToPizza = nullptr;
+};
 
 /*
  copied UDT 2:
@@ -120,6 +132,7 @@ struct Guitar
     void restringGuitar(Strings strings);
     void tune();
     void info();
+    JUCE_LEAK_DETECTOR(Guitar)
 };
 
 Guitar::Guitar() { std::cout << "Constructing Guitar" << std::endl;  } 
@@ -149,6 +162,17 @@ void Guitar::tune()
     std::cout << "Guitar Tuned!" << std::endl;
 }
 
+struct GuitarWrapper
+{
+    GuitarWrapper( Guitar* ptr ) : pointerToGuitar( ptr ) { }
+    ~GuitarWrapper()
+    {
+        delete pointerToGuitar;
+    }
+    
+    Guitar* pointerToGuitar = nullptr;
+};
+
 /*
  copied UDT 3:
  */
@@ -164,7 +188,7 @@ struct Airliner
     bool isTakeoffReady(double fuelAmount);
     int beginBoarding(int passengers);
     void status();
-    
+    JUCE_LEAK_DETECTOR(Airliner)
 };
 
 Airliner::Airliner() { std::cout << "Constructing Airliner" << std::endl; }
@@ -200,6 +224,17 @@ int Airliner::beginBoarding(int passengers)
     return 1;
 }
 
+struct AirlinerWrapper
+{
+    AirlinerWrapper( Airliner* ptr ) : pointerToAirliner( ptr ) { }
+    ~AirlinerWrapper()
+    {
+        delete pointerToAirliner;
+    }
+    
+    Airliner* pointerToAirliner = nullptr;
+};
+
 /*
  new UDT 4:
  with 2 member functions
@@ -223,7 +258,7 @@ struct GuitarStore
     void modifyGuitar(double gauge, char model, int frets, int stringNum);
     void loadPlane(int guitarNum, int passangers);
     void info();
-    
+    JUCE_LEAK_DETECTOR(GuitarStore)
 };
 
 void GuitarStore::info()
@@ -254,6 +289,17 @@ void GuitarStore::loadPlane(int guitarNum, int passengers)
     std::cout << "Guitars Loaded!\n Leftover guitars: " << guitarNum << "\n Empty Seats: " << plane.capacity << std::endl; 
 }
 
+struct GuitarStoreWrapper
+{
+    GuitarStoreWrapper( GuitarStore* ptr ) : pointerToGuitarStore( ptr ) { }
+    ~GuitarStoreWrapper()
+    {
+        delete pointerToGuitarStore;
+    }
+    
+    GuitarStore* pointerToGuitarStore = nullptr;
+};
+
 /*
  new UDT 5:
  with 2 member functions
@@ -277,6 +323,7 @@ struct Party
     void increasePizzaDiameter();
     void startParty(double fuel);
     void partyPrep();
+    JUCE_LEAK_DETECTOR(Party)
 };
 
 void Party::partyPrep()
@@ -305,6 +352,17 @@ void Party::startParty(double fuel)
     }
 }
 
+struct PartyWrapper
+{
+    PartyWrapper( Party* ptr ) : pointerToParty( ptr ) { }
+    ~PartyWrapper()
+    {
+        delete pointerToParty;
+    }
+    
+    Party* pointerToParty = nullptr;
+};
+
 /*
  MAKE SURE YOU ARE NOT ON THE MASTER BRANCH
 
@@ -322,23 +380,26 @@ int main()
 {
     std::cout << "good to go!\n" << std::endl;
     
-    Guitar gibson;
-    Guitar::Strings ernie;
-    // gibson.restringGuitar(ernie);
-    std::cout << "Number of frets on guitar: " << gibson.fretNum << "\nNumber of strings: " << gibson.stringNum << std::endl;
-    gibson.info();
+    GuitarWrapper gibson( new Guitar() );
+    
+    // How do I call restringGuitar() on a Strings object when working with these wrappers? Is it fine to do this? Do I have to create a wrapper for the nested struct?
+    // Guitar::Strings ernie;
+    //gibson.pointerToGuitar->restringGuitar( ernie );
+    
+    std::cout << "Number of frets on guitar: " << gibson.pointerToGuitar->fretNum << "\nNumber of strings: " << gibson.pointerToGuitar->stringNum << std::endl;
+    gibson.pointerToGuitar->info();
 
     std::cout << "\n" << std::endl;
 
-    Airliner airbus737;
-    std::cout << std::boolalpha << "Airliner capacity: " << airbus737.capacity << "\nAirliner fuel: " << airbus737.fuelCapacity << "\nIs Airliner takeoff ready: " << airbus737.isTakeoffReady(190000) << std::endl;
-    airbus737.status();
+    AirlinerWrapper airbus737( new Airliner() );
+    std::cout << std::boolalpha << "Airliner capacity: " << airbus737.pointerToAirliner->capacity << "\nAirliner fuel: " << airbus737.pointerToAirliner->fuelCapacity << "\nIs Airliner takeoff ready: " << airbus737.pointerToAirliner->isTakeoffReady(190000) << std::endl;
+    airbus737.pointerToAirliner->status();
 
     std::cout << "\n" << std::endl;
     
-    Pizza margharita;
-    std::cout << "Pizza diameter is: " << margharita.diameter << "\nSlice size is: " << margharita.calculateSliceSize(6) << std::endl;
-    margharita.properties();
+    PizzaWrapper margharita( new Pizza() );
+    std::cout << "Pizza diameter is: " << margharita.pointerToPizza->diameter << "\nSlice size is: " << margharita.pointerToPizza->calculateSliceSize(6) << std::endl;
+    margharita.pointerToPizza->properties();
 
 
     // Project 3 Part 5 Checks
@@ -357,19 +418,19 @@ int main()
 
     std::cout << "\n" << std::endl;
 
-    GuitarStore store;
+    GuitarStoreWrapper store( new GuitarStore() );
     //store.modifyGuitar(0.13, 'g', 21, 6);
-    std::cout << "Store Guitar info:\n Model:" << store.guitar.model << "\n String number: "<< store.guitar.stringNum << "\n Fret number: "<< store.guitar.fretNum << std::endl;
-    store.info();
+    std::cout << "Store Guitar info:\n Model:" << store.pointerToGuitarStore->guitar.model << "\n String number: "<< store.pointerToGuitarStore->guitar.stringNum << "\n Fret number: "<< store.pointerToGuitarStore->guitar.fretNum << std::endl;
+    store.pointerToGuitarStore->info();
     //store.loadPlane(18, 400);
 
     std::cout << "\n" << std::endl;
 
-    Party party;
+    PartyWrapper party( new Party() );
     //party.guitar.tune();
     //party.increasePizzaDiameter();
-    std::cout << std::boolalpha << "Running party checks: \n Guitar tuned: " << party.guitar.tuned << "\n Plane capacity: " << party.plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (party.pizza.calculateSliceSize(party.plane.capacity) >= 0.5) << std::endl;
-    party.partyPrep();
+    std::cout << std::boolalpha << "Running party checks: \n Guitar tuned: " << party.pointerToParty->guitar.tuned << "\n Plane capacity: " << party.pointerToParty->plane.capacity << "\n Pizza slice size > 0.5 per person? : " << (party.pointerToParty->pizza.calculateSliceSize(party.pointerToParty->plane.capacity) >= 0.5) << std::endl;
+    party.pointerToParty->partyPrep();
     //party.startParty(183390);
 }
 
