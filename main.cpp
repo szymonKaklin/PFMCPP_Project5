@@ -390,7 +390,7 @@ int main()
     std::cout << "good to go!\n" << std::endl;
     
     GuitarWrapper gibson( new Guitar() );
-    StringsWrapper ernie(new Guitar::Strings() );
+    StringsWrapper ernie( new Guitar::Strings() );
     
     gibson.pointerToGuitar->restringGuitar( *ernie.pointerToStrings );
     std::cout << "Number of frets on guitar: " << gibson.pointerToGuitar->fretNum << "\nNumber of strings: " << gibson.pointerToGuitar->stringNum << std::endl;
