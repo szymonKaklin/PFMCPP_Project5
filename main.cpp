@@ -173,6 +173,17 @@ struct GuitarWrapper
     Guitar* pointerToGuitar = nullptr;
 };
 
+struct StringsWrapper
+{
+    StringsWrapper( Guitar::Strings* ptr ) : pointerToStrings( ptr ) { }
+    ~StringsWrapper()
+    {
+        delete pointerToStrings;
+    }
+    
+    Guitar::Strings* pointerToStrings = nullptr;
+};
+
 /*
  copied UDT 3:
  */
@@ -379,11 +390,9 @@ int main()
     std::cout << "good to go!\n" << std::endl;
     
     GuitarWrapper gibson( new Guitar() );
+    StringsWrapper ernie(new Guitar::Strings() );
     
-    // How do I call restringGuitar() on a Strings object when working with these wrappers? Is it fine to do this? Do I have to create a wrapper for the nested struct?
-    // Guitar::Strings ernie;
-    //gibson.pointerToGuitar->restringGuitar( ernie );
-    
+    gibson.pointerToGuitar->restringGuitar( *ernie.pointerToStrings );
     std::cout << "Number of frets on guitar: " << gibson.pointerToGuitar->fretNum << "\nNumber of strings: " << gibson.pointerToGuitar->stringNum << std::endl;
     gibson.pointerToGuitar->info();
 
