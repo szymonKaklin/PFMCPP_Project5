@@ -1,9 +1,4 @@
 #include <iostream>
-
-#include "Pizza.h"
-#include "Guitar.h"
-#include "Airliner.h"
-
 #include "Party.h"
 
 Party::Party() { std::cout << "Constructing Party" << std::endl; }

@@ -1,4 +1,6 @@
 #include "LeakedObjectDetector.h"
+#include "Guitar.h"
+#include "Airliner.h"
 
 struct GuitarStore 
 {

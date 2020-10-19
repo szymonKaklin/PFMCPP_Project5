@@ -1,4 +1,7 @@
 #include "LeakedObjectDetector.h"
+#include "Airliner.h"
+#include "Pizza.h"
+#include "Guitar.h"
 
 struct Party
 {

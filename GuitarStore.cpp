@@ -1,8 +1,4 @@
 #include <iostream>
-
-#include "Guitar.h"
-#include "Airliner.h"
-
 #include "GuitarStore.h"
 
 GuitarStore::GuitarStore() { std::cout << "Constructing Guitar Store " << std::endl; }
@@ -29,7 +25,7 @@ void GuitarStore::modifyGuitar(double gauge, char model, int frets, int stringNu
 void GuitarStore::loadPlane(int guitarNum, int passengers)
 {
     plane.beginBoarding(passengers);
-    while( (plane.capacity && guitarNum) > 0 )
+    while( (plane.capacity > 0) && (guitarNum > 0) )
     {
         --plane.capacity;
         --guitarNum;
