@@ -32,6 +32,11 @@
 
 #include <iostream>
 #include "Wrappers.h"
+#include "Pizza.h"
+#include "Airliner.h"
+#include "Guitar.h"
+#include "GuitarStore.h"
+#include "Party.h"
 
 /*
  copied UDT 1:
@@ -114,7 +119,7 @@ int main()
     std::cout << "Store Guitar info:\n Model:" << store.pointerToGuitarStore->guitar.model << "\n String number: "<< store.pointerToGuitarStore->guitar.stringNum << "\n Fret number: "<< store.pointerToGuitarStore->guitar.fretNum << std::endl;
     store.pointerToGuitarStore->info();
     
-    // store.pointerToGuitarStore->loadPlane(12, 400);
+    store.pointerToGuitarStore->loadPlane(12, 400);
 
     std::cout << "\n" << std::endl;
 

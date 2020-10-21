@@ -1,5 +1,12 @@
-#include "Party.h"
-#include "GuitarStore.h"
+// Is there a way for me to not have to include Guitar.h?
+// I need it for Guitar::Strings, as if i just forward declare struct Guitar,
+// I get incomplete type used in nested name specifier error.
+#include "Guitar.h"
+
+struct Pizza;
+struct Airliner;
+struct GuitarStore;
+struct Party;
 
 struct PizzaWrapper
 {
